@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulazione Concorso Operatore Socio Sanitario - Modulo 41</title>
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #1a1a2e, #16213e, #0f3460);
+            margin: 0;
+            padding: 20px;
+            color: #f0f0f0;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 2.5em;
+            color: #ffd700;
+            text-shadow: 0 0 10px #ffd700, 0 0 20px #ffd700;
+            animation: glow 2s infinite alternate;
+        }
+
+        @keyframes glow {
+            from { text-shadow: 0 0 10px #ffd700, 0 0 20px #ffd700; }
+            to { text-shadow: 0 0 20px #ffd700, 0 0 30px #ffd700; }
+        }
+
+        #timer {
+            text-align: center;
+            margin: 20px 0;
+            font-size: 1.5em;
+            color: #00eaff;
+            text-shadow: 0 0 5px #00eaff;
+        }
+
+        .question-nav {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin: 20px 0;
+        }
+
+        .question-box {
+            width: 40px;
+            height: 40px;
+            margin: 8px;
+            background: linear-gradient(45deg, #333, #555);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+            color: #fff;
+            font-weight: bold;
+        }
+
+        .question-box:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 15px #ffd700;
+        }
+
+        .question-box.answered {
+            background: linear-gradient(45deg, #ffd700, #ffaa00);
+            box-shadow: 0 0 15px #ffd700;
+        }
+
+        .question {
+            margin-bottom: 20px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .question.active {
+            display: block;
+        }
+
+        .question h3 {
+            margin: 0 0 15px 0;
+            color: #ffffff;
+            font-size: 1.6em;
+            text-shadow: 0 0 3px rgba(255, 255, 255, 0.5);
+            line-height: 1.4;
+        }
+
+        .option {
+            margin: 10px 0;
+            padding: 12px;
+            display: flex;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.25);
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            color: #ffffff;
+            font-size: 1.2em;
+            font-weight: 500;
+        }
+
+        .option:hover {
+            background: rgba(255, 255, 255, 0.35);
+            transform: translateX(5px);
+        }
+
+        .option.correct {
+            background: linear-gradient(90deg, #00eaff, #00b8d4);
+            color: #fff;
+            box-shadow: 0 0 15px #00eaff;
+        }
+
+        .option.wrong {
+            background: linear-gradient(90deg, #ff5252, #d81b60);
+            color: #fff;
+            box-shadow: 0 0 15px #ff5252;
+        }
+
+        .lamp {
+            display: none;
+            margin-left: 15px;
+            cursor: pointer;
+            font-size: 1.5em;
+            color: #ffd700;
+            text-shadow: 0 0 10px #ffd700;
+            transition: transform 0.3s ease;
+        }
+
+        .lamp:hover {
+            transform: scale(1.2);
+        }
+
+        .explanation {
+            margin-top: 15px;
+            font-style: italic;
+            color: #f0f0f0;
+            background: rgba(0, 0, 0, 0.5);
+            padding: 10px;
+            border-radius: 5px;
+            display: none;
+            animation: slideIn 0.5s ease;
+            font-size: 1.1em;
+            line-height: 1.5;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(-20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            margin: 20px 0;
+        }
+
+        .nav-button {
+            padding: 12px 25px;
+            background: linear-gradient(45deg, #ffd700, #ffaa00);
+            color: #1a1a2e;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1.2em;
+            box-shadow: 0 0 10px #ffd700;
+            transition: all 0.3s ease;
+            font-weight: bold;
+        }
+
+        .nav-button:disabled {
+            background: #666;
+            color: #ccc;
+            box-shadow: none;
+            cursor: not-allowed;
+        }
+
+        .nav-button:hover:not(:disabled) {
+            transform: scale(1.05);
+            box-shadow: 0 0 20px #ffd700;
+        }
+
+        button#submit {
+            display: block;
+            width: 250px;
+            margin: 20px auto;
+            padding: 15px;
+            background: linear-gradient(45deg, #00eaff, #00b8d4);
+            color: #1a1a2e;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1.3em;
+            box-shadow: 0 0 15px #00eaff;
+            transition: all 0.3s ease;
+            font-weight: bold;
+        }
+
+        button#submit:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 25px #00eaff;
+        }
+
+        #result {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 1.8em;
+            color: #ffd700;
+            text-shadow: 0 0 10px #ffd700;
+        }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <h1>Simulazione Concorso Operatore Socio Sanitario - Modulo 41</h1>
+        <div class="question-nav" id="questionNav"></div>
+        <div id="timer">Tempo rimanente: <span id="time">30:00</span></div>
+        <div id="quiz"></div>
+        <div class="navigation">
+            <button class="nav-button" id="prev" disabled>⬅ Indietro</button>
+            <button class="nav-button" id="next">Avanti ➡</button>
+        </div>
+        <button id="submit">Invia Risposte</button>
+        <div id="result"></div>
+    </div>
+
+    <script>
+        // Array di domande (1141-1170) estratte dalla banca dati con opzioni mescolate
+        const questions = [
+            {
+                question: "Per evitare la formazione di trombi nella persona allettata, l'OSS deve:",
+                options: ["Evitare di cambiare la posizione della persona allettata", "Eseguire movimenti passivi degli arti", "Eseguire la ginnastica attiva"],
+                correct: "Eseguire movimenti passivi degli arti",
+                explanation: "L’esecuzione di movimenti passivi degli arti è una misura fondamentale per prevenire la formazione di trombi in persone allettate, poiché stimola la circolazione e riduce la stasi venosa, un fattore di rischio per la trombosi venosa profonda. L’OSS deve eseguire questi movimenti con delicatezza, seguendo le indicazioni dell’infermiere, monitorare la cute per segni di arrossamento o edema, e segnalare sintomi come dolore o gonfiore agli arti. Evitare cambi posturali aumenta il rischio di trombi, mentre la ginnastica attiva è indicata solo per pazienti autosufficienti."
+            },
+            {
+                question: "Per il posizionamento di un paziente in posizione prona, l’OSS deve:",
+                options: ["Posizionare un cuscino sotto il torace", "Posizionare un cuscino sotto il capo e uno sotto le gambe", "Evitare qualsiasi supporto"],
+                correct: "Posizionare un cuscino sotto il capo e uno sotto le gambe",
+                explanation: "Nel posizionamento prono, l’OSS deve garantire il comfort e la sicurezza del paziente, posizionando un cuscino sotto il capo per mantenere il collo in posizione neutra e uno sotto le gambe per ridurre la pressione sulle ginocchia e favorire la circolazione. Questo aiuta a prevenire lesioni da pressione e discomfort. Un cuscino sotto il torace potrebbe ostacolare la respirazione, mentre evitare supporti aumenta il rischio di piaghe da decubito. L’OSS deve monitorare la respirazione, garantire l’igiene della cute e segnalare all’infermiere eventuali segni di disagio o arrossamenti."
+            },
+            {
+                question: "Per il trasporto di un paziente in carrozzina, l’OSS deve:",
+                options: ["Trasportare il paziente con la carrozzina inclinata all’indietro", "Spingere la carrozzina con il paziente seduto di spalle", "Trasportare il paziente con la carrozzina inclinata in avanti"],
+                correct: "Spingere la carrozzina con il paziente seduto di spalle",
+                explanation: "Spingere la carrozzina con il paziente seduto di spalle è la tecnica corretta per garantire sicurezza e comfort durante il trasporto. Questa posizione permette all’OSS di controllare il movimento, evitare ostacoli e mantenere il paziente stabile. Inclinare la carrozzina in avanti o all’indietro può causare instabilità o cadute. L’OSS deve verificare che i freni siano sbloccati, assicurare il paziente con cinture se necessario, e segnalare all’infermiere eventuali difficoltà o segni di disagio durante il trasporto."
+            },
+            {
+                question: "Per prevenire le cadute di un paziente anziano, l’OSS deve:",
+                options: ["Fornire un ambiente con illuminazione scarsa", "Rimuovere ostacoli e fornire ausili adeguati", "Lasciare il paziente senza supporto"],
+                correct: "Rimuovere ostacoli e fornire ausili adeguati",
+                explanation: "La prevenzione delle cadute in pazienti anziani richiede la rimozione di ostacoli (es. tappeti, cavi) e l’uso di ausili come bastoni o deambulatori, per garantire sicurezza e stabilità. Un ambiente con illuminazione scarsa aumenta il rischio di cadute, mentre lasciare il paziente senza supporto è pericoloso, soprattutto se ha problemi di mobilità. L’OSS deve controllare l’ambiente, assistere nella deambulazione, monitorare la stabilità del paziente e segnalare all’infermiere eventuali episodi di vertigini o cadute."
+            },
+            {
+                question: "Per somministrare ossigeno per via nasale, l’OSS deve:",
+                options: ["Posizionare la cannula nasale e verificare il flusso", "Regolare il flusso di ossigeno senza controllo", "Somministrare ossigeno senza cannula"],
+                correct: "Posizionare la cannula nasale e verificare il flusso",
+                explanation: "L’OSS, sotto indicazione dell’infermiere, può posizionare la cannula nasale per la somministrazione di ossigeno e verificare che il flusso sia conforme alla prescrizione medica, garantendo che il paziente riceva la quantità corretta. Regolare il flusso senza controllo o somministrare ossigeno senza cannula è pericoloso e non rientra nelle competenze dell’OSS. L’OSS deve monitorare il comfort del paziente, controllare la cute intorno alla cannula per irritazioni, e segnalare all’infermiere sintomi come dispnea o ipossia."
+            },
+            {
+                question: "Per un paziente con tracheostomia, l’OSS deve:",
+                options: ["Pulire la cannula senza aspirazione", "Aspirare il muco e mantenere la pervietà della cannula", "Evitare qualsiasi intervento sulla tracheostomia"],
+                correct: "Aspirare il muco e mantenere la pervietà della cannula",
+                explanation: "L’OSS, formato adeguatamente e sotto supervisione dell’infermiere, può aspirare il muco e mantenere la pervietà della cannula tracheostomica per garantire la respirazione del paziente. Questo include l’uso di tecnica asettica e il controllo delle secrezioni. Pulire senza aspirazione è insufficiente, mentre evitare interventi può compromettere la sicurezza del paziente. L’OSS deve monitorare la respirazione, garantire l’igiene del sito, e segnalare all’infermiere segni di infezione o ostruzione."
+            },
+            {
+                question: "Quale delle seguenti è una funzione dell’OSS nell’assistenza al paziente con stomia?",
+                options: ["Eseguire la sostituzione della stomia", "Monitorare la cute peristomale e cambiare il sacchetto", "Prescrivere prodotti per la stomia"],
+                correct: "Monitorare la cute peristomale e cambiare il sacchetto",
+                explanation: "L’OSS ha il compito di monitorare la cute peristomale per prevenire irritazioni o infezioni e di cambiare il sacchetto della stomia, garantendo igiene e comfort. La sostituzione della stomia (es. creazione chirurgica) è di competenza medica, e la prescrizione di prodotti è riservata a medici o infermieri. L’OSS deve osservare il colore e la consistenza delle feci, garantire l’igiene della stomia, e segnalare all’infermiere anomalie come arrossamenti o secrezioni."
+            },
+            {
+                question: "Quale delle seguenti è una misura per prevenire le infezioni urinarie in un paziente con catetere?",
+                options: ["Mantenere il catetere aperto", "Garantire l’igiene perineale e il drenaggio corretto", "Evitare la pulizia del catetere"],
+                correct: "Garantire l’igiene perineale e il drenaggio corretto",
+                explanation: "Per prevenire infezioni urinarie in pazienti cateterizzati, l’OSS deve garantire un’igiene perineale rigorosa con tecnica asettica e assicurare che il sistema di drenaggio sia posizionato correttamente (es. sacca sotto il livello della vescica) per evitare ristagni. Mantenere il catetere aperto o evitare la pulizia aumenta il rischio di infezioni. L’OSS deve monitorare il colore e la quantità delle urine, controllare il sito di inserzione, e segnalare all’infermiere segni come febbre o urine torbide."
+            },
+            {
+                question: "Quale delle seguenti è una responsabilità dell’OSS nella gestione del dolore?",
+                options: ["Prescrivere analgesici", "Segnalare il dolore all’infermiere", "Somministrare farmaci per via endovenosa"],
+                correct: "Segnalare il dolore all’infermiere",
+                explanation: "L’OSS ha la responsabilità di osservare e segnalare all’infermiere eventuali segni di dolore del paziente, come espressioni facciali, lamentele o irrequietezza, per consentire un’adeguata gestione. La prescrizione e la somministrazione di farmaci (soprattutto per via endovenosa) non rientrano nelle competenze dell’OSS. L’OSS deve monitorare il comfort del paziente, utilizzare tecniche non farmacologiche (es. posizionamento), e segnalare all’infermiere variazioni nell’intensità del dolore o effetti collaterali."
+            },
+            {
+                question: "Quale delle seguenti è una procedura corretta per l’igiene orale di un paziente non autosufficiente?",
+                options: ["Usare uno spazzolino duro", "Utilizzare un collutorio alcolico", "Eseguire l’igiene con uno spazzolino morbido e acqua"],
+                correct: "Eseguire l’igiene con uno spazzolino morbido e acqua",
+                explanation: "L’igiene orale di un paziente non autosufficiente richiede l’uso di uno spazzolino morbido e acqua, o soluzioni delicate, per pulire denti, gengive e mucosa orale senza causare traumi. Uno spazzolino duro può danneggiare le mucose, e un collutorio alcolico può irritare o essere controindicato. L’OSS deve eseguire l’igiene con attenzione, monitorare la mucosa per ulcerazioni o sanguinamenti, e segnalare all’infermiere anomalie come stomatite o dolore."
+            },
+            {
+                question: "Quale delle seguenti è una funzione dell’OSS nell’assistenza a un paziente con piaghe da decubito?",
+                options: ["Prescrivere medicazioni avanzate", "Eseguire cambi posturali regolari", "Somministrare antibiotici"],
+                correct: "Eseguire cambi posturali regolari",
+                explanation: "L’OSS ha un ruolo chiave nella prevenzione e gestione delle piaghe da decubito eseguendo cambi posturali regolari (ogni 2-3 ore) per ridurre la pressione sulle aree a rischio. La prescrizione di medicazioni avanzate o antibiotici è di competenza medica o infermieristica. L’OSS deve monitorare la cute per arrossamenti o lesioni, garantire l’igiene, utilizzare dispositivi antidecubito, e segnalare all’infermiere eventuali peggioramenti."
+            },
+            {
+                question: "Quale delle seguenti è una misura corretta per l’OSS nella gestione di un paziente con febbre?",
+                options: ["Somministrare antipiretici", "Monitorare la temperatura e garantire l’idratazione", "Evitare la misurazione della temperatura"],
+                correct: "Monitorare la temperatura e garantire l’idratazione",
+                explanation: "L’OSS deve monitorare la temperatura corporea con un termometro (es. ascellare, 5-7 minuti) e garantire un’adeguata idratazione, offrendo acqua o liquidi al paziente. La somministrazione di antipiretici è di competenza infermieristica o medica, e evitare la misurazione impedisce un’adeguata valutazione. L’OSS deve osservare segni associati (es. sudorazione, brividi), garantire il comfort, e segnalare all’infermiere variazioni significative o sintomi come confusione."
+            },
+            {
+                question: "Quale delle seguenti è una funzione dell’OSS nell’assistenza a un paziente con demenza?",
+                options: ["Sostituirsi al paziente in tutte le attività", "Stimolare le capacità residue del paziente", "Ignorare i comportamenti disfunzionali"],
+                correct: "Stimolare le capacità residue del paziente",
+                explanation: "L’OSS deve stimolare le capacità residue di un paziente con demenza, incoraggiandolo a svolgere attività semplici (es. vestirsi, mangiare) per mantenere l’autonomia il più a lungo possibile. Sostituirsi completamente riduce la dignità e l’indipendenza, mentre ignorare i comportamenti disfunzionali può aggravare l’agitazione. L’OSS deve monitorare il comportamento, garantire un ambiente sicuro, e segnalare all’infermiere episodi di aggressività o confusione."
+            },
+            {
+                question: "Quale delle seguenti è una procedura corretta per l’OSS nel rifacimento del letto occupato?",
+                options: ["Girare il paziente di lato e arrotolare la biancheria sporca", "Lasciare il paziente supino e tirare le lenzuola", "Rimuovere tutta la biancheria senza girare il paziente"],
+                correct: "Girare il paziente di lato e arrotolare la biancheria sporca",
+                explanation: "Nel rifacimento del letto occupato, l’OSS deve girare il paziente di lato per garantire sicurezza e comfort, arrotolando la biancheria sporca sotto la schiena e stendendo quella pulita sulla parte libera del materasso. Lasciare il paziente supino o rimuovere la biancheria senza girarlo può causare discomfort o lesioni. L’OSS deve lavorare in coppia se necessario, monitorare la cute del paziente, e segnalare all’infermiere eventuali arrossamenti o piaghe."
+            },
+            {
+                question: "Quale delle seguenti è una misura per l’OSS nella gestione di un paziente con incontinenza urinaria?",
+                options: ["Evitare l’igiene perineale", "Utilizzare dispositivi assorbenti e garantire l’igiene", "Limitare l’assunzione di liquidi"],
+                correct: "Utilizzare dispositivi assorbenti e garantire l’igiene",
+                explanation: "L’OSS deve utilizzare dispositivi assorbenti (es. pannoloni) e garantire un’igiene perineale frequente per prevenire irritazioni e infezioni in pazienti con incontinenza urinaria. Evitare l’igiene aumenta il rischio di dermatiti, mentre limitare i liquidi può causare disidratazione. L’OSS deve monitorare la cute, cambiare i dispositivi regolarmente, e segnalare all’infermiere segni di infezione o discomfort."
+            },
+            {
+                question: "Quale delle seguenti è una funzione dell’OSS nell’assistenza a un paziente con alimentazione enterale?",
+                options: ["Posizionare la sonda nasogastrica", "Monitorare la tolleranza e segnalare anomalie", "Prescrivere la dieta enterale"],
+                correct: "Monitorare la tolleranza e segnalare anomalie",
+                explanation: "L’OSS deve monitorare la tolleranza del paziente all’alimentazione enterale, osservando segni come nausea, distensione addominale o reflusso, e segnalare anomalie all’infermiere. Il posizionamento della sonda nasogastrica e la prescrizione della dieta sono di competenza infermieristica o medica. L’OSS deve garantire l’igiene del sito della sonda, mantenere la posizione corretta del paziente (es. semi-seduta), e segnalare eventuali problemi come ostruzioni."
+            },
+            {
+                question: "Quale delle seguenti è una misura corretta per l’OSS nella gestione di un paziente con dispnea?",
+                options: ["Posizionare il paziente in posizione semi-seduta", "Somministrare ossigeno senza prescrizione", "Mantenere il paziente in posizione supina"],
+                correct: "Posizionare il paziente in posizione semi-seduta",
+                explanation: "Posizionare il paziente in posizione semi-seduta (angolo di 30-45°) facilita la respirazione in caso di dispnea, riducendo la pressione sul diaframma. Somministrare ossigeno senza prescrizione è al di fuori delle competenze dell’OSS, e la posizione supina può peggiorare la respirazione. L’OSS deve monitorare la frequenza respiratoria, garantire il comfort, e segnalare all’infermiere sintomi come cianosi o agitazione."
+            },
+            {
+                question: "Quale delle seguenti è una responsabilità dell’OSS nella gestione dei rifiuti sanitari?",
+                options: ["Smaltire i rifiuti senza classificazione", "Seguire le procedure di smaltimento dei rifiuti infettivi", "Mescolare rifiuti infettivi con rifiuti urbani"],
+                correct: "Seguire le procedure di smaltimento dei rifiuti infettivi",
+                explanation: "L’OSS deve seguire le procedure di smaltimento dei rifiuti sanitari, separando i rifiuti infettivi (es. garze contaminate) in contenitori specifici e rispettando le normative di sicurezza. Smaltire senza classificazione o mescolare rifiuti infettivi con urbani aumenta il rischio di contaminazione. L’OSS deve utilizzare dispositivi di protezione (es. guanti), garantire la corretta etichettatura dei contenitori, e segnalare all’infermiere eventuali irregolarità."
+            },
+            {
+                question: "Quale delle seguenti è una funzione dell’OSS nell’assistenza a un paziente con protesi acustica?",
+                options: ["Prescrivere la protesi acustica", "Pulire e controllare la protesi", "Eseguire test audiometrici"],
+                correct: "Pulire e controllare la protesi",
+                explanation: "L’OSS può pulire e controllare la protesi acustica, assicurandosi che sia funzionante e posizionata correttamente, per garantire un’adeguata comunicazione del paziente. La prescrizione della protesi e i test audiometrici sono di competenza medica o specialistica. L’OSS deve monitorare il comfort del paziente, verificare la batteria della protesi, e segnalare all’infermiere eventuali malfunzionamenti o irritazioni dell’orecchio."
+            },
+            {
+                question: "Quale delle seguenti è una misura corretta per l’OSS nella gestione di un paziente con edema?",
+                options: ["Sollevare gli arti inferiori", "Applicare bendaggi stretti", "Evitare qualsiasi movimento"],
+                correct: "Sollevare gli arti inferiori",
+                explanation: "Sollevare gli arti inferiori facilita il ritorno venoso e riduce l’edema, specialmente in pazienti con insufficienza venosa o cardiaca. Applicare bendaggi stretti senza prescrizione può compromettere la circolazione, e evitare movimenti aumenta il rischio di complicanze come trombi. L’OSS deve monitorare la cute per segni di ulcerazioni, garantire il comfort, e segnalare all’infermiere variazioni nell’edema o sintomi come dolore."
+            },
+            {
+                question: "Quale delle seguenti è una responsabilità dell’OSS nell’assistenza a un paziente con diabete?",
+                options: ["Monitorare i segni di ipoglicemia e segnalarli", "Somministrare insulina", "Prescrivere una dieta ipoglicidica"],
+                correct: "Monitorare i segni di ipoglicemia e segnalarli",
+                explanation: "L’OSS deve monitorare segni di ipoglicemia (es. sudorazione, tremori, confusione) e segnalarli immediatamente all’infermiere per un intervento tempestivo. La somministrazione di insulina e la prescrizione della dieta sono di competenza infermieristica o medica. L’OSS deve garantire una dieta conforme alle indicazioni, monitorare l’appetito, e segnalare all’infermiere sintomi come stanchezza o poliuria."
+            },
+            {
+                question: "Quale delle seguenti è una misura corretta per l’OSS nella gestione di un paziente con stomia intestinale?",
+                options: ["Eseguire la stomia chirurgica", "Cambiare il sacchetto e monitorare la cute", "Prescrivere creme per la cute peristomale"],
+                correct: "Cambiare il sacchetto e monitorare la cute",
+                explanation: "L’OSS deve cambiare il sacchetto della stomia intestinale e monitorare la cute peristomale per prevenire irritazioni o infezioni, garantendo igiene e comfort. Eseguire la stomia chirurgica è di competenza medica, e la prescrizione di creme è riservata a medici o infermieri. L’OSS deve osservare le caratteristiche delle feci, garantire l’igiene, e segnalare all’infermiere anomalie come sanguinamenti o arrossamenti."
+            },
+            {
+                question: "Quale delle seguenti è una funzione dell’OSS nell’assistenza a un paziente con catetere vescicale?",
+                options: ["Monitorare la diuresi e garantire l’igiene", "Inserire il catetere vescicale", "Prescrivere antibiotici"],
+                correct: "Monitorare la diuresi e garantire l’igiene",
+                explanation: "L’OSS deve monitorare la diuresi (quantità, colore, trasparenza) e garantire l’igiene del catetere vescicale per prevenire infezioni, utilizzando tecnica asettica. L’inserzione del catetere e la prescrizione di antibiotici sono di competenza infermieristica o medica. L’OSS deve controllare la sacca di raccolta, osservare segni di infezione (es. urine torbide), e segnalare all’infermiere eventuali anomalie come febbre o ostruzioni."
+            },
+            {
+                question: "Quale delle seguenti è una misura corretta per l’OSS nella gestione di un paziente con difficoltà di deglutizione?",
+                options: ["Imboccare il paziente con cibi solidi", "Posizionare il paziente in posizione semi-seduta", "Somministrare liquidi senza supervisione"],
+                correct: "Posizionare il paziente in posizione semi-seduta",
+                explanation: "Posizionare il paziente in posizione semi-seduta durante i pasti riduce il rischio di aspirazione in caso di difficoltà di deglutizione (disfagia). Imboccare con cibi solidi senza adattamenti è rischioso, e somministrare liquidi senza supervisione può causare soffocamento. L’OSS deve monitorare la deglutizione, offrire cibi di consistenza adeguata, e segnalare all’infermiere segni come tosse o cianosi."
+            },
+            {
+                question: "Quale delle seguenti è una responsabilità dell’OSS nella gestione di un paziente con rischio di aspirazione?",
+                options: ["Somministrare cibi liquidi", "Mantenere la posizione semi-seduta durante i pasti", "Evitare qualsiasi alimentazione"],
+                correct: "Mantenere la posizione semi-seduta durante i pasti",
+                explanation: "Mantenere il paziente in posizione semi-seduta durante i pasti riduce il rischio di aspirazione, facilitando la deglutizione e prevenendo il passaggio di cibo nelle vie aeree. Somministrare cibi liquidi senza controllo aumenta il rischio, e evitare l’alimentazione può causare malnutrizione. L’OSS deve monitorare la deglutizione, garantire cibi di consistenza appropriata, e segnalare all’infermiere segni di aspirazione come tosse o dispnea."
+            },
+            {
+                question: "Quale delle seguenti è una misura corretta per l’OSS nella gestione di un paziente con rischio di infezioni?",
+                options: ["Evitare il lavaggio delle mani", "Utilizzare guanti e lavarsi le mani", "Mescolare strumenti sterili e non sterili"],
+                correct: "Utilizzare guanti e lavarsi le mani",
+                explanation: "L’OSS deve utilizzare guanti monouso e lavarsi le mani prima e dopo ogni contatto con il paziente per prevenire infezioni, rispettando le precauzioni standard. Evitare il lavaggio delle mani o mescolare strumenti sterili e non sterili aumenta il rischio di contaminazione. L’OSS deve garantire l’igiene ambientale, monitorare segni di infezione (es. febbre), e segnalare all’infermiere eventuali anomalie."
+            },
+            {
+                question: "Quale delle seguenti è una funzione dell’OSS nell’assistenza a un paziente con mobilità ridotta?",
+                options: ["Eseguire mobilizzazioni attive senza supervisione", "Eseguire mobilizzazioni passive sotto indicazione", "Evitare qualsiasi movimento"],
+                correct: "Eseguire mobilizzazioni passive sotto indicazione",
+                explanation: "L’OSS può eseguire mobilizzazioni passive sotto indicazione dell’infermiere o del fisioterapista per prevenire rigidità articolare e piaghe da decubito in pazienti con mobilità ridotta. Le mobilizzazioni attive senza supervisione sono inappropriate, e evitare movimenti aumenta il rischio di complicanze. L’OSS deve monitorare la cute e il comfort del paziente, eseguire i movimenti con delicatezza, e segnalare all’infermiere segni di dolore o arrossamenti."
+            },
+            {
+                question: "Quale delle seguenti è una misura corretta per l’OSS nella gestione di un paziente con rischio di malnutrizione?",
+                options: ["Monitorare l’assunzione di cibo e segnalare", "Prescrivere integratori alimentari", "Somministrare pasti senza controllo"],
+                correct: "Monitorare l’assunzione di cibo e segnalare",
+                explanation: "L’OSS deve monitorare l’assunzione di cibo, osservando quantità e preferenze del paziente, e segnalare all’infermiere eventuali rifiuti o difficoltà per prevenire la malnutrizione. La prescrizione di integratori è di competenza medica, e somministrare pasti senza controllo può ignorare problemi come disfagia. L’OSS deve assistere nei pasti, garantire una dieta bilanciata, e segnalare segni come perdita di peso o apatia."
+            },
+            {
+                question: "Quale delle seguenti è una responsabilità dell’OSS nella gestione di un paziente con rischio di cadute?",
+                options: ["Fornire un ambiente sicuro e ausili", "Lasciare il paziente senza supervisione", "Evitare l’uso di ausili"],
+                correct: "Fornire un ambiente sicuro e ausili",
+                explanation: "L’OSS deve garantire un ambiente sicuro, rimuovendo ostacoli e fornendo ausili come deambulatori, per prevenire cadute, specialmente in pazienti anziani o con mobilità ridotta. Lasciare il paziente senza supervisione o evitare ausili aumenta il rischio. L’OSS deve monitorare la deambulazione, controllare l’illuminazione, e segnalare all’infermiere episodi di instabilità o cadute."
+            },
+            {
+                question: "Quale delle seguenti è una funzione dell’OSS nell’assistenza a un paziente in isolamento?",
+                options: ["Utilizzare dispositivi di protezione e seguire le procedure", "Evitare l’uso di guanti e mascherine", "Mescolare la biancheria con quella di altri pazienti"],
+                correct: "Utilizzare dispositivi di protezione e seguire le procedure",
+                explanation: "L’OSS deve utilizzare dispositivi di protezione individuale (es. guanti, mascherine, sopracamici) e seguire le procedure di isolamento per prevenire la trasmissione di infezioni. Evitare DPI o mescolare la biancheria aumenta il rischio di contaminazione. L’OSS deve garantire l’igiene, smaltire i rifiuti correttamente, e segnalare all’infermiere eventuali violazioni delle procedure o segni di infezione."
+            }
+        ];
+
+        let currentQuestion = 0;
+
+        // Carica i quadratini di navigazione
+        function loadQuestionNav() {
+            const navDiv = document.getElementById("questionNav");
+            questions.forEach((_, index) => {
+                const box = document.createElement("div");
+                box.classList.add("question-box");
+                box.textContent = index + 1;
+                box.addEventListener("click", () => {
+                    showQuestion(index);
+                });
+                navDiv.appendChild(box);
+            });
+        }
+
+        // Carica il quiz
+        function loadQuiz() {
+            const quizDiv = document.getElementById("quiz");
+            questions.forEach((q, index) => {
+                const questionDiv = document.createElement("div");
+                questionDiv.classList.add("question");
+                questionDiv.id = `question-${index}`;
+                questionDiv.innerHTML = `
+                    <h3>${index + 1141}. ${q.question}</h3>
+                    ${q.options.map((opt, i) => `
+                        <div class="option" data-value="${opt}">
+                            <input type="radio" name="q${index}" value="${opt}" id="q${index}_${i}">
+                            <label for="q${index}_${i}">${opt}</label>
+                            <span class="lamp" id="lamp-${index}-${i}">💡</span>
+                        </div>
+                    `).join("")}
+                    <div class="explanation" id="exp-${index}">${q.explanation}</div>
+                `;
+                quizDiv.appendChild(questionDiv);
+
+                // Aggiungi evento per accendere il quadratino
+                const radios = questionDiv.querySelectorAll(`input[name="q${index}"]`);
+                radios.forEach(radio => {
+                    radio.addEventListener("change", () => {
+                        document.querySelectorAll(".question-box")[index].classList.add("answered");
+                    });
+                });
+            });
+            showQuestion(0); // Mostra la prima domanda
+        }
+
+        // Mostra la domanda corrente
+        function showQuestion(index) {
+            document.querySelectorAll(".question").forEach(q => q.classList.remove("active"));
+            document.getElementById(`question-${index}`).classList.add("active");
+            currentQuestion = index;
+
+            // Gestione stato pulsanti
+            document.getElementById("prev").disabled = currentQuestion === 0;
+            document.getElementById("next").disabled = currentQuestion === questions.length - 1;
+        }
+
+        // Timer (30 minuti)
+        let timeLeft = 30 * 60;
+        function startTimer() {
+            const timer = setInterval(() => {
+                timeLeft--;
+                const minutes = Math.floor(timeLeft / 60);
+                const seconds = timeLeft % 60;
+                document.getElementById("time").textContent = 
+                    `${minutes}:${seconds < 10 ? "0" + seconds : seconds}`;
+                
+                if (timeLeft <= 0) {
+                    clearInterval(timer);
+                    checkAnswers();
+                }
+            }, 1000);
+        }
+
+        // Controllo risposte e feedback visivo
+        function checkAnswers() {
+            let score = 0;
+            questions.forEach((q, index) => {
+                const selected = document.querySelector(`input[name="q${index}"]:checked`);
+                const options = document.querySelectorAll(`#question-${index} .option`);
+
+                options.forEach(option => {
+                    const value = option.getAttribute("data-value");
+                    if (value === q.correct) {
+                        option.classList.add("correct");
+                        const lamp = option.querySelector(".lamp");
+                        lamp.style.display = "inline";
+                        lamp.addEventListener("click", () => {
+                            const explanation = document.getElementById(`exp-${index}`);
+                            explanation.style.display = "block";
+                        });
+                    }
+                });
+
+                if (selected) {
+                    if (selected.value === q.correct) {
+                        score++;
+                    } else {
+                        selected.parentElement.classList.add("wrong");
+                    }
+                }
+            });
+
+            const resultDiv = document.getElementById("result");
+            resultDiv.textContent = `Punteggio: ${score} / ${questions.length}`;
+            document.getElementById("submit").disabled = true;
+            document.getElementById("prev").disabled = true;
+            document.getElementById("next").disabled = true;
+
+            // Disabilita i radio button dopo l'invio
+            document.querySelectorAll("input[type=radio]").forEach(radio => {
+                radio.disabled = true;
+            });
+        }
+
+        // Inizializzazione
+        window.onload = () => {
+            loadQuestionNav();
+            loadQuiz();
+            startTimer();
+
+            document.getElementById("prev").addEventListener("click", () => {
+                if (currentQuestion > 0) showQuestion(currentQuestion - 1);
+            });
+
+            document.getElementById("next").addEventListener("click", () => {
+                if (currentQuestion < questions.length - 1) showQuestion(currentQuestion + 1);
+            });
+
+            document.getElementById("submit").addEventListener("click", checkAnswers);
+        };
+    </script>
+</body>
+</html>
